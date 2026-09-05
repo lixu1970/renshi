@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>人事备忘 · 四色重要程度版 · V20260905-03</title>
+<title>人事备忘 · 四色重要程度版 · V20260905-04</title>
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#697386;--line:#dfe4ec;--blue:#1769e0;--green:#137333;--teal:#0f766e}
 *{box-sizing:border-box}
@@ -48,7 +48,7 @@ mark{background:#fff1a8;padding:0 1px;border-radius:2px}
 
 .reviewAction{margin-top:9px;display:flex;justify-content:flex-end}
 .reviewDowngrade{height:40px;min-width:108px;border:1.5px solid #b8c1cf;border-radius:10px;font-size:15px;font-weight:800;color:#172033;padding:0 12px}
-.reviewDowngrade.to-yellow{background:#fff2a8}.reviewDowngrade.to-green{background:#c6efce}
+.reviewDowngrade.to-yellow{background:#fff2a8}.reviewDowngrade.to-green{background:#c6efce}.reviewDowngrade.to-white{background:#fff}
 .reviewDowngrade:disabled{opacity:.75}
 @media(max-width:430px){
   .wrap{padding:8px 7px 26px}
@@ -63,9 +63,9 @@ mark{background:#fff1a8;padding:0 1px;border-radius:2px}
 <body>
 <div class="wrap">
   <h1>人事备忘</h1>
-  <div style="text-align:center;font-size:13px;color:#667085;margin:-3px 0 8px;">版本：V20260905-03</div>
+  <div style="text-align:center;font-size:13px;color:#667085;margin:-3px 0 8px;">版本：V20260905-04</div>
   <div class="top">
-    <input id="q" list="teacherList" autocomplete="off" placeholder="输入姓名、日期、红？、黄？或关键词">
+    <input id="q" list="teacherList" autocomplete="off" placeholder="输入姓名、日期、红？、黄？、绿？或关键词">
     <datalist id="teacherList"><option value="杨鸿"></option><option value="易强文"></option><option value="程露"></option><option value="王晓丽"></option><option value="柳德攀"></option><option value="邢方凯"></option><option value="徐倩"></option><option value="耿红梅"></option><option value="张军霞"></option><option value="朱彩兰"></option><option value="顾小颜"></option><option value="李晶"></option><option value="阮宸宇"></option><option value="张梓煜"></option><option value="王帅"></option><option value="邓建军"></option><option value="常锋"></option><option value="于向东"></option><option value="邢建姝"></option><option value="胡雪静"></option><option value="赵峰"></option><option value="洪轩"></option><option value="秦楠"></option><option value="高伟"></option><option value="李昀倩"></option><option value="周静"></option><option value="徐邦仪"></option><option value="李美霖"></option><option value="冯彦"></option><option value="赵丰"></option><option value="刘天一"></option><option value="李晓菲"></option><option value="刘晟典"></option><option value="刘运琦"></option><option value="贾宇鹏"></option><option value="王欢欢"></option><option value="侯宇鹏"></option><option value="谢洪宾"></option><option value="董颖丽"></option><option value="王东生"></option><option value="李旭"></option><option value="季伟"></option><option value="李敏"></option><option value="郑岩"></option><option value="张磊"></option><option value="王滨"></option><option value="如"></option><option value="乔冠忠"></option><option value="魏民"></option><option value="蒋燕"></option><option value="王雪梅"></option><option value="闫克"></option><option value="杨有峰"></option><option value="杨春苗"></option><option value="崔胜"></option><option value="邱艳娜"></option><option value="黄冉"></option><option value="杨世雄"></option><option value="吴迪"></option><option value="张凯芳"></option><option value="王贵忠"></option><option value="高健"></option><option value="张杰"></option><option value="丁师傅"></option><option value="刘师傅"></option></datalist>
     <div class="actions">
       <button id="view">查看</button>
@@ -134,6 +134,7 @@ function parseQuery(raw){
   const colorQuery=raw.replace(/\s/g,"");
   if(["红?","红？","红色?","红色？"].includes(colorQuery)) return {type:"color",color:"red",raw};
   if(["黄?","黄？","黄色?","黄色？"].includes(colorQuery)) return {type:"color",color:"yellow",raw};
+  if(["绿?","绿？","绿色?","绿色？"].includes(colorQuery)) return {type:"color",color:"green",raw};
   const range=raw.match(/^(\d{6})\s*-\s*(\d{6})$/);
   if(range) return {type:"range",start:Number(range[1]),end:Number(range[2]),raw};
   if(/^\d{6}$/.test(raw)) return {type:"date",date:Number(raw),raw};
@@ -173,6 +174,7 @@ function reviewDowngradeTarget(color){
   const c=normalizePriority(color);
   if(c==="red")return "yellow";
   if(c==="yellow")return "green";
+  if(c==="green")return "white";
   return null;
 }
 function applyPriority(card,color){
@@ -206,14 +208,14 @@ function card(rec,readonly=true,isNew=false,reviewColor=null){
     const btn=document.createElement("button");
     btn.type="button";
     btn.className=`reviewDowngrade to-${target}`;
-    btn.textContent=target==="yellow"?"降为黄色":"降为绿色";
+    btn.textContent=target==="yellow"?"降为黄色":target==="green"?"降为绿色":"降为白色";
     btn.addEventListener("click",()=>{
       applyPriority(d,target);
       setCellLocal(rec.sheet,rec.row,3,target);
       saveEdits();updateEditCount();
       btn.disabled=true;
-      btn.textContent=target==="yellow"?"已保存为黄色":"已保存为绿色";
-      setStatus(`${rec.sheet}：已${target==="yellow"?"降为黄色":"降为绿色"}并保存`);
+      btn.textContent=target==="yellow"?"已保存为黄色":target==="green"?"已保存为绿色":"已保存为白色";
+      setStatus(`${rec.sheet}：已${target==="yellow"?"降为黄色":target==="green"?"降为绿色":"降为白色"}并保存`);
     });
     action.appendChild(btn);d.appendChild(action);
   }
@@ -225,7 +227,7 @@ function doView(){
   const raw=document.getElementById("q").value.trim();
   const box=document.getElementById("results"),sum=document.getElementById("summary");
   box.innerHTML="";sum.textContent="";setStatus("");
-  if(!raw){box.innerHTML='<div class="empty">请输入姓名、6位日期、日期区间、红？、黄？或关键词</div>';return;}
+  if(!raw){box.innerHTML='<div class="empty">请输入姓名、6位日期、日期区间、红？、黄？、绿？或关键词</div>';return;}
   const q=parseQuery(raw), all=records();
   let hits=[];
 
@@ -252,7 +254,9 @@ function doView(){
   }else if(q.type==="teacher"){
     sum.textContent=`${q.teacher} 共 ${hits.length} 条记录；“查看”仅查看，需修改时点击“编辑”`;
   }else if(q.type==="color"){
-    sum.textContent=`${q.color==="red"?"红色":"黄色"}关注事项共 ${hits.length} 条；需要降级时直接点击每条后的“${q.color==="red"?"降为黄色":"降为绿色"}”`;
+    const colorName=q.color==="red"?"红色":q.color==="yellow"?"黄色":"绿色";
+    const actionName=q.color==="red"?"降为黄色":q.color==="yellow"?"降为绿色":"降为白色";
+    sum.textContent=`${colorName}关注事项共 ${hits.length} 条；需要降级时直接点击每条后的“${actionName}”`;
   }else{
     sum.textContent=`共找到 ${hits.length} 条记录`;
   }

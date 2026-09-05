@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>人事备忘 · 四色重要程度版 · V20260905-05</title>
+<title>人事备忘 · 四色重要程度版 · V20260905-06</title>
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#697386;--line:#dfe4ec;--blue:#1769e0;--green:#137333;--teal:#0f766e}
 *{box-sizing:border-box}
@@ -48,7 +48,7 @@ mark{background:#fff1a8;padding:0 1px;border-radius:2px}
 
 .recordActions{margin-top:9px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .recordActions button{height:41px;border-radius:10px;font-size:15px;font-weight:800;padding:0 6px}
-.recordSave{background:#0f766e;color:#fff}.recordNew{background:#1769e0;color:#fff}.recordBack{background:#e4e9f0;color:#27364d}
+.recordModify{background:#0f766e;color:#fff}.recordNew{background:#1769e0;color:#fff}.recordBack{background:#e4e9f0;color:#27364d}
 @media(max-width:430px){
   .wrap{padding:8px 7px 26px}
   h1{font-size:24px;margin-bottom:7px}
@@ -62,7 +62,7 @@ mark{background:#fff1a8;padding:0 1px;border-radius:2px}
 <body>
 <div class="wrap">
   <h1>人事备忘</h1>
-  <div style="text-align:center;font-size:13px;color:#667085;margin:-3px 0 8px;">版本：V20260905-05</div>
+  <div style="text-align:center;font-size:13px;color:#667085;margin:-3px 0 8px;">版本：V20260905-06</div>
   <div class="top">
     <input id="q" list="teacherList" autocomplete="off" placeholder="输入姓名、日期、红？、黄？、绿？或关键词">
     <datalist id="teacherList"><option value="杨鸿"></option><option value="易强文"></option><option value="程露"></option><option value="王晓丽"></option><option value="柳德攀"></option><option value="邢方凯"></option><option value="徐倩"></option><option value="耿红梅"></option><option value="张军霞"></option><option value="朱彩兰"></option><option value="顾小颜"></option><option value="李晶"></option><option value="阮宸宇"></option><option value="张梓煜"></option><option value="王帅"></option><option value="邓建军"></option><option value="常锋"></option><option value="于向东"></option><option value="邢建姝"></option><option value="胡雪静"></option><option value="赵峰"></option><option value="洪轩"></option><option value="秦楠"></option><option value="高伟"></option><option value="李昀倩"></option><option value="周静"></option><option value="徐邦仪"></option><option value="李美霖"></option><option value="冯彦"></option><option value="赵丰"></option><option value="刘天一"></option><option value="李晓菲"></option><option value="刘晟典"></option><option value="刘运琦"></option><option value="贾宇鹏"></option><option value="王欢欢"></option><option value="侯宇鹏"></option><option value="谢洪宾"></option><option value="董颖丽"></option><option value="王东生"></option><option value="李旭"></option><option value="季伟"></option><option value="李敏"></option><option value="郑岩"></option><option value="张磊"></option><option value="王滨"></option><option value="如"></option><option value="乔冠忠"></option><option value="魏民"></option><option value="蒋燕"></option><option value="王雪梅"></option><option value="闫克"></option><option value="杨有峰"></option><option value="杨春苗"></option><option value="崔胜"></option><option value="邱艳娜"></option><option value="黄冉"></option><option value="杨世雄"></option><option value="吴迪"></option><option value="张凯芳"></option><option value="王贵忠"></option><option value="高健"></option><option value="张杰"></option><option value="丁师傅"></option><option value="刘师傅"></option></datalist>
@@ -193,7 +193,7 @@ function card(rec,readonly=true,isNew=false){
       <textarea class="field itemField priority-${priority}" data-col="2" ${readonly?"readonly":""}>${esc(rec.item)}</textarea>
     </div>
     <div class="recordActions">
-      <button type="button" class="recordSave">保存</button>
+      <button type="button" class="recordModify">修改</button>
       <button type="button" class="recordNew">新建</button>
       <button type="button" class="recordBack">返回</button>
     </div>`;
@@ -202,7 +202,7 @@ function card(rec,readonly=true,isNew=false){
     f.addEventListener("focus",()=>{lastTouchedField=f;});
   });
   d.querySelectorAll(".colorSwatch").forEach(b=>b.addEventListener("click",()=>{if(!b.disabled)applyPriority(d,b.dataset.color);}));
-  d.querySelector(".recordSave").addEventListener("click",()=>saveCard(d,true));
+  d.querySelector(".recordModify").addEventListener("click",()=>modifyCard(d));
   d.querySelector(".recordNew").addEventListener("click",()=>newAfterCard(d));
   d.querySelector(".recordBack").addEventListener("click",()=>returnFromCard(d));
   applyPriority(d,priority);
@@ -239,10 +239,10 @@ function doView(){
   if(q.type==="range"){
     sum.textContent=`日期区间 ${raw}：共找到 ${hits.length} 条记录`;
   }else if(q.type==="teacher"){
-    sum.textContent=`${q.teacher} 共 ${hits.length} 条记录；“查看”仅查看，需修改时点击“编辑”`;
+    sum.textContent=`${q.teacher} 共 ${hits.length} 条记录；需修改哪一条，请点该条下方“修改”`;
   }else if(q.type==="color"){
     const colorName=q.color==="red"?"红色":q.color==="yellow"?"黄色":"绿色";
-    sum.textContent=`${colorName}关注事项共 ${hits.length} 条；需要修改时点“编辑”，再直接选择四色`;
+    sum.textContent=`${colorName}关注事项共 ${hits.length} 条；需修改哪一条，请点该条下方“修改”`;
   }else{
     sum.textContent=`共找到 ${hits.length} 条记录`;
   }
@@ -257,6 +257,16 @@ function focusEditor(target){
   try{target.focus({preventScroll:false});}catch(e){target.focus();}
   try{const n=target.value.length;target.setSelectionRange(n,n);}catch(e){}
   lastTouchedField=target;
+}
+
+function modifyCard(c){
+  if(!c || !c.dataset.sheet)return;
+  /* 每条“修改”只激活本条；保存统一交给页面顶部大“保存” */
+  c.querySelectorAll(".field").forEach(e=>{e.readOnly=false;e.removeAttribute("readonly");});
+  c.querySelectorAll(".colorSwatch").forEach(e=>e.disabled=false);
+  let target=(lastTouchedField && c.contains(lastTouchedField))?lastTouchedField:c.querySelector(".itemField");
+  focusEditor(target);
+  setStatus(`${c.dataset.sheet}：本条已进入修改状态；修改完成后请点击页面上方的大“保存”按钮`);
 }
 
 function enableEditing(){
@@ -280,7 +290,7 @@ function enableEditing(){
   }
   if(!target)target=box.querySelector(".itemField");
   focusEditor(target);
-  setStatus("已进入编辑状态；修改后可用本条下方“保存”，或点“新建”连续录入");
+  setStatus("已进入编辑状态；修改完成后请统一点击页面上方的大“保存”按钮");
 }
 
 function readCardValues(c){
@@ -312,7 +322,6 @@ function saveCard(c,show=true){
 
 function newAfterCard(c){
   if(!c || !c.dataset.sheet)return;
-  saveCard(c,false);
   const sheet=c.dataset.sheet;
   const r=findNextEmptyRow(sheet);
   if(r===null){setStatus(`${sheet} 的42条预留记录已用完，请先下载后扩充Excel`,false);return;}
@@ -321,7 +330,7 @@ function newAfterCard(c){
   const target=nc.querySelector(".itemField");
   nc.scrollIntoView({behavior:"smooth",block:"center"});
   focusEditor(target);
-  setStatus(`${sheet}：上一条已保留，已在其后新建空白记录等待录入`);
+  setStatus(`${sheet}：已在本条后新建空白记录；录入完成后请点击页面上方“大保存”`);
 }
 
 function returnFromCard(c){
@@ -330,9 +339,9 @@ function returnFromCard(c){
   while(prev && !prev.classList.contains("result"))prev=prev.previousElementSibling;
   if(c.dataset.new==="1"){
     c.remove();
-    setStatus("本次新建已取消，未保存；最后一次保存内容保留");
+    setStatus("本次新建已取消，未保存；已返回上一条记录");
   }else{
-    setStatus("已保留最后一次保存内容，并返回上一条记录");
+    setStatus("已返回上一条记录；页面内容尚未自动保存");
   }
   if(prev){prev.scrollIntoView({behavior:"smooth",block:"center"});lastTouchedField=prev.querySelector(".itemField");}
 }
